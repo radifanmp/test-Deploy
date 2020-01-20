@@ -23,7 +23,8 @@ exports.show = (req,res) => {
 
 
 exports.store = (req,res) => {
-    Todo.create(req.body)
+    console.log(req.user)
+    Todo.create({...req.body,created_by:req.user.userId})
         .then(todo => {res.send({
         message: "Success",
         todo
