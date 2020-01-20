@@ -17,12 +17,26 @@ exports.login = (req, res) => {
                 token
             })
         }
-        else {
-            res.send({
-                error: true,
-                message: "Wrong Email Or Password Dude ! ! !"
-            })
-        }
+            //Encrypt and Check Password
+    const passwordEncrypt = startEncrypt.decrypt(user.password)
+    if (passwordEncrypt === req.body.password){
+      const token = jwt.sign({ userId: user }, 'kepobanget')
+      res.send({
+        token
+      })
+    }
+    
+    else {
+      res.status(400).json({
+        error: true,
+        message: "Password Wrong"
+      })
+    }
+  }).catch(err => {
+    res.send({
+      error: true,
+      message: `Error : ${err}`
+    })
     })
 }
 
