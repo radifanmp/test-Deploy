@@ -8,19 +8,26 @@ exports.login = (req, res) => {
     const email = req.body.email
     const password = req.body.password
 
-    User.findOne({ where: {email, password}})
-    .then(user => {
-        if(user){
-            const token = jwt.sign({ userId: user.id }, 'lolazeita')
-            res.send({
-                user,
-                token
-            })
-        }
-            //Encrypt and Check Password
+    if (!email || !password ){
+    return res.status(400).json({
+      error: true,
+      message:  "Please Inser Field Email & Password" 
+    })
+  }
+  User.findOne({ where: { email} }).then(user => {
+
+    //Check Email Found or Not Found
+    if (!user) {
+      return res.status(400).json({
+        error: true,
+        message: "Email not found"
+      })
+    } 
+    
+    //Encrypt and Check Password
     const passwordEncrypt = startEncrypt.decrypt(user.password)
     if (passwordEncrypt === req.body.password){
-      const token = jwt.sign({ userId: user }, 'kepobanget')
+      const token = jwt.sign({ userId: user }, 'lolazeita')
       res.send({
         token
       })
@@ -37,8 +44,10 @@ exports.login = (req, res) => {
       error: true,
       message: `Error : ${err}`
     })
-    })
+   })
+
 }
+
 
 //Register
 
